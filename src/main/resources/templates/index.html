@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discussions · Forum</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">Community</p>
+            <h1>What's on your mind?</h1>
+            <p class="hero-sub">Start a discussion, share an idea, or ask a question.</p>
+        </div>
+        <a class="btn btn-primary" th:if="${currentUser != null}" th:href="@{/posts/new}">New post</a>
+        <a class="btn btn-primary" th:if="${currentUser == null}" th:href="@{/register}">Join the forum</a>
+    </section>
+
+    <div class="empty-state" th:if="${posts.isEmpty()}">
+        <div class="empty-icon">✦</div>
+        <h2>No discussions yet</h2>
+        <p>Be the first to start one.</p>
+        <a class="btn btn-primary"
+           th:href="${currentUser != null} ? @{/posts/new} : @{/register}"
+           th:text="${currentUser != null} ? 'Create the first post' : 'Create an account'">Start</a>
+    </div>
+
+    <div class="post-list" th:unless="${posts.isEmpty()}">
+        <article class="post-card" th:each="post : ${posts}">
+            <a class="post-card-link" th:href="@{/posts/{id}(id=${post.id})}">
+                <h2 class="post-card-title" th:text="${post.title}">Post title</h2>
+                <p class="post-card-preview" th:text="${#strings.abbreviate(post.body, 180)}">Preview text.</p>
+            </a>
+            <div class="post-card-meta">
+                <span class="avatar"
+                      th:text="${#strings.toUpperCase(#strings.substring(post.authorUsername, 0, 1))}">A</span>
+                <span class="meta-author" th:text="${post.authorUsername}">author</span>
+                <span class="dot">·</span>
+                <span th:text="${post.createdAtDisplay}">Jan 1, 2026</span>
+                <span class="spacer"></span>
+                <span class="stat" title="Comments">💬 <span th:text="${post.commentCount}">0</span></span>
+                <span class="stat" title="Likes">♥ <span th:text="${post.likeCount}">0</span></span>
+            </div>
+        </article>
+    </div>
+
+    <nav class="pagination" th:if="${posts.totalPages > 1}">
+        <a class="btn btn-ghost btn-sm" th:if="${posts.hasPrevious()}"
+           th:href="@{/(page=${posts.number - 1})}">← Newer</a>
+        <span class="btn btn-ghost btn-sm is-disabled" th:unless="${posts.hasPrevious()}">← Newer</span>
+
+        <span class="pagination-info" th:text="|Page ${posts.number + 1} of ${posts.totalPages}|">Page 1 of 1</span>
+
+        <a class="btn btn-ghost btn-sm" th:if="${posts.hasNext()}"
+           th:href="@{/(page=${posts.number + 1})}">Older →</a>
+        <span class="btn btn-ghost btn-sm is-disabled" th:unless="${posts.hasNext()}">Older →</span>
+    </nav>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

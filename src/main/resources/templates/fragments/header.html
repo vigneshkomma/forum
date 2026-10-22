@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="site-header" th:fragment="header">
+    <div class="container header-inner">
+        <a class="brand" th:href="@{/}">forum<span class="brand-dot">.</span></a>
+        <nav class="nav">
+            <th:block th:if="${currentUser != null}">
+                <a class="nav-link" th:href="@{/posts/new}">New post</a>
+                <span class="nav-user" th:text="${currentUser.displayName}">User</span>
+                <form th:action="@{/logout}" method="post" class="inline-form">
+                    <button type="submit" class="btn btn-ghost btn-sm">Log out</button>
+                </form>
+            </th:block>
+            <th:block th:if="${currentUser == null}">
+                <a class="nav-link" th:href="@{/login}">Log in</a>
+                <a class="btn btn-primary btn-sm" th:href="@{/register}">Sign up</a>
+            </th:block>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New post · Forum</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container container-narrow">
+    <a class="back-link" th:href="@{/}">← All discussions</a>
+
+    <div class="form-card">
+        <h1>Start a discussion</h1>
+        <p class="muted">Good titles get good answers.</p>
+
+        <form th:action="@{/posts}" method="post" th:object="${form}">
+            <label for="title">Title</label>
+            <input type="text" id="title" th:field="*{title}" maxlength="200"
+                   placeholder="What do you want to talk about?" autofocus>
+            <p class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">error</p>
+
+            <label for="body">Body</label>
+            <textarea id="body" th:field="*{body}" rows="12" maxlength="20000"
+                      placeholder="Share the details…"></textarea>
+            <p class="field-error" th:if="${#fields.hasErrors('body')}" th:errors="*{body}">error</p>
+
+            <div class="form-actions">
+                <a class="btn btn-ghost" th:href="@{/}">Cancel</a>
+                <button class="btn btn-primary" type="submit">Publish</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

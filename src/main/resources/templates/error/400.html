@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bad request · Forum</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="error-wrap">
+    <p class="error-code">400</p>
+    <h1>That did not work</h1>
+    <p class="muted" th:text="${message} ?: 'The request was invalid. Go back and try again.'">
+        The request was invalid. Go back and try again.
+    </p>
+    <a class="btn btn-primary" th:href="@{/}">Back to discussions</a>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

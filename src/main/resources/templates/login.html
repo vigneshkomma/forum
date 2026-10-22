@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in · Forum</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="auth-wrap">
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="muted">Log in to start discussions and join the conversation.</p>
+
+        <div class="alert alert-error" th:if="${param.error}">Wrong username or password.</div>
+        <div class="alert alert-success" th:if="${param.registered}">Account created. You can log in now.</div>
+        <div class="alert alert-info" th:if="${param.logout}">You have been logged out.</div>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+            <button class="btn btn-primary btn-block" type="submit">Log in</button>
+        </form>
+
+        <p class="auth-alt">New here? <a th:href="@{/register}">Create an account</a></p>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

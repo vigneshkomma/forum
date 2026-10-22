@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${post.title} + ' · Forum'">Post · Forum</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container container-narrow">
+    <a class="back-link" th:href="@{/}">← All discussions</a>
+
+    <div class="flash" th:if="${flash}" th:text="${flash}">Saved.</div>
+
+    <article class="post-full">
+        <h1 class="post-title" th:text="${post.title}">Post title</h1>
+
+        <div class="post-meta">
+            <span class="avatar"
+                  th:text="${#strings.toUpperCase(#strings.substring(post.author.username, 0, 1))}">A</span>
+            <span class="meta-author" th:text="${post.author.displayName ?: post.author.username}">Author</span>
+            <span class="dot">·</span>
+            <span th:text="${post.createdAtFullDisplay}">Jan 1, 2026 at 12:00</span>
+        </div>
+
+        <div class="post-body" th:text="${post.body}">Body</div>
+
+        <div class="post-actions">
+            <form th:if="${currentUser != null}"
+                  th:action="@{/posts/{id}/like(id=${post.id})}"
+                  method="post" class="inline-form">
+                <button type="submit" class="like-btn" th:classappend="${postLiked} ? 'is-liked'">
+                    <span class="heart" th:text="${postLiked} ? '♥' : '♡'">♡</span>
+                    <span th:text="${postLikeCount}">0</span>
+                </button>
+            </form>
+            <span th:if="${currentUser == null}" class="like-btn is-static">
+                ♡ <span th:text="${postLikeCount}">0</span>
+            </span>
+            <span class="stat" th:text="|${comments.size()} comments|">0 comments</span>
+        </div>
+    </article>
+
+    <section class="comments" id="comments">
+        <h2 th:text="|Comments (${comments.size()})|">Comments</h2>
+
+        <p class="muted" th:if="${comments.isEmpty()}">No comments yet. Start the conversation.</p>
+
+        <article class="comment" th:each="comment : ${comments}" th:id="|comment-${comment.id}|">
+            <div class="comment-head">
+                <span class="avatar avatar-sm"
+                      th:text="${#strings.toUpperCase(#strings.substring(comment.authorUsername, 0, 1))}">A</span>
+                <strong th:text="${comment.authorUsername}">user</strong>
+                <span class="dot">·</span>
+                <span class="muted" th:text="${comment.createdAtDisplay}">date</span>
+                <span class="spacer"></span>
+
+                <form th:if="${currentUser != null}"
+                      th:action="@{/posts/{postId}/comments/{commentId}/like(postId=${post.id}, commentId=${comment.id})}"
+                      method="post" class="inline-form">
+                    <button type="submit" class="like-btn like-btn-sm"
+                            th:classappend="${likedCommentIds.contains(comment.id)} ? 'is-liked'">
+                        <span th:text="${likedCommentIds.contains(comment.id)} ? '♥' : '♡'">♡</span>
+                        <span th:text="${comment.likeCount}">0</span>
+                    </button>
+                </form>
+                <span th:if="${currentUser == null}" class="like-btn like-btn-sm is-static">
+                    ♡ <span th:text="${comment.likeCount}">0</span>
+                </span>
+            </div>
+            <div class="comment-body" th:text="${comment.body}">Comment body</div>
+        </article>
+
+        <div class="comment-form-card" th:if="${currentUser != null}">
+            <h3>Add a comment</h3>
+            <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post" th:object="${commentForm}">
+                <textarea th:field="*{body}" rows="4" placeholder="Write a comment…"></textarea>
+                <p class="field-error" th:if="${#fields.hasErrors('body')}" th:errors="*{body}">error</p>
+                <button class="btn btn-primary" type="submit">Post comment</button>
+            </form>
+        </div>
+
+        <p class="login-prompt" th:if="${currentUser == null}">
+            <a th:href="@{/login}">Log in</a> to join the discussion.
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
